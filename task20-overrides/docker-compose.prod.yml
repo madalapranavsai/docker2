@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  app:
+    ports:
+      - "80:80"
+    environment:
+      - APP_ENV=production
+      - DEBUG_MODE=false
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
