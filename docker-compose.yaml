@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: alpine
+    container_name: compose_frontend
+    command: sleep 3600
+    networks:
+      - public_net
+
+  backend:
+    image: alpine
+    container_name: compose_backend
+    command: sleep 3600
+    networks:
+      - public_net
+      - internal_net
+
+  database:
+    image: alpine
+    container_name: compose_database
+    command: sleep 3600
+    networks:
+      - internal_net
+
+networks:
+  public_net:
+    driver: bridge
+    name: custom_public_net
+  internal_net:
+    driver: bridge
+    name: custom_internal_net
