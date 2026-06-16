@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  slow_backend:
+    image: python:3-alpine
+    container_name: task19_backend
+    # Simulate a slow 30s boot sequence
+    command: >
+      sh -c "echo 'Booting database connections...';
+      sleep 30;
+      mkdir -p /app && echo 'OK' > /app/health;
+      cd /app && python -m http.server 8080"
+    healthcheck:
+      # Native inline check: Bypasses macOS file formatting issues entirely
+      test: ["CMD-SHELL", "wget -q -O - http://127.0.0.1:8080/health | grep 'OK' || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 40s 
+
+  dependent_frontend:
+    image: alpine
+    container_name: task19_frontend
+    command: sh -c "echo 'Backend is healthy! I am starting.' && sleep 3600"
+    depends_on:
+      slow_backend:
+        condition: service_healthy
