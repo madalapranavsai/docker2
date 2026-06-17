@@ -1,0 +1,29 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  secure_app:
+    build: 
+      context: .
+      dockerfile: hardened.Dockerfile
+    container_name: hardened_node_app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    
+    # 🟢 FIX: Pass secrets safely at runtime, never build-time
+    env_file:
+      - .env 
+
+    # 🟢 FIX: Lock the filesystem to prevent malware installation
+    read_only: true
+    # Provide a volatile memory space if the app genuinely needs to write temp files
+    tmpfs:
+      - /tmp
+
+    # 🟢 FIX: Prevent DDoS or memory-leak attacks from crashing the host node
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 128M
