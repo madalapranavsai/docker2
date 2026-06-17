@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  app:
+    build: ./app
+    # We use 'expose' instead of 'ports' because we do NOT want these mapped to the Mac host.
+    # We only want NGINX to be able to reach them internally.
+    expose:
+      - "8080"
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - app
